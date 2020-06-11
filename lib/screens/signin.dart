@@ -7,6 +7,7 @@ import 'package:tefood/model/user_model.dart';
 import 'package:tefood/screens/main_rider.dart';
 import 'package:tefood/screens/main_shop.dart';
 import 'package:tefood/screens/main_user.dart';
+import 'package:tefood/utility/my_constant.dart';
 import 'package:tefood/utility/my_style.dart';
 import 'package:tefood/utility/normal_dialog.dart';
 
@@ -84,7 +85,7 @@ class _SignInState extends State<SignIn> {
 
   Future<Null> chackAuthen() async {
     String url =
-        'http://192.168.1.37/tefood/getUserWhereUser.php?isAdd=true&User=$user';
+        '${MyConstant().domain}/tefood/getUserWhereUser.php?isAdd=true&User=$user';
     try {
       Response response = await Dio().get(url);
       print('res = $response');

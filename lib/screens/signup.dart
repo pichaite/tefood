@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tefood/utility/my_constant.dart';
 import 'package:tefood/utility/my_style.dart';
 import 'package:tefood/utility/normal_dialog.dart';
 import 'package:dio/dio.dart';
@@ -91,7 +92,7 @@ class _SignUpState extends State<SignUp> {
       );
 
   Future<Null> chackUser() async {
-    String url = 'http://192.168.1.37/tefood/getUserWhereUser.php?isAdd=true&User=$user';
+    String url = '${MyConstant().domain}/tefood/getUserWhereUser.php?isAdd=true&User=$user';
 
     try {
       Response response = await Dio().get(url);
@@ -107,7 +108,7 @@ class _SignUpState extends State<SignUp> {
 
   Future<Null> regidterThread() async {
     String url =
-        'http://192.168.1.37/tefood/addUser.php?isAdd=true&Name=$name&User=$user&Password=$password&ChooseType=$chooseType';
+        '${MyConstant().domain}/tefood/addUser.php?isAdd=true&Name=$name&User=$user&Password=$password&ChooseType=$chooseType';
     try {
       Response response = await Dio().get(url);
       print('res = $response');

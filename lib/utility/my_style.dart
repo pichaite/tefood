@@ -6,6 +6,8 @@ class MyStyle {
     width: 8.0,
   );
 
+
+
   Color darkColor = Colors.blue.shade900;
   Color primaryColor = Colors.green;
 
@@ -13,6 +15,12 @@ class MyStyle {
     return Container(
       width: 120.0,
       child: Image.asset('assets/images/logo.png'),
+    );
+  }
+
+  Widget showProgress(){
+    return Center(
+      child: CircularProgressIndicator(),
     );
   }
 
