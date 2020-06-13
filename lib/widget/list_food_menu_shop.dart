@@ -1,5 +1,12 @@
+import 'dart:convert';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tefood/model/food_model.dart';
 import 'package:tefood/screens/add_food_menu.dart';
+import 'package:tefood/utility/my_constant.dart';
+import 'package:tefood/utility/my_style.dart';
 
 class ListFoodMenuShop extends StatefulWidget {
   @override
@@ -7,12 +14,106 @@ class ListFoodMenuShop extends StatefulWidget {
 }
 
 class _ListFoodMenuShopState extends State<ListFoodMenuShop> {
+  bool status = true;
+  bool loadStatus = true;
+  List<FoodModel> foodmodels = List();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    readFoodMenu();
+  }
+
+  Future<Null> readFoodMenu() async {
+
+    if (foodmodels.length != 0) {
+      foodmodels.clear();
+    }
+
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String idShop = preferences.getString('id');
+    String url =
+        '${MyConstant().domain}/tefood/getFoodWhereIdShop.php?isAdd=true&idShop=$idShop';
+    await Dio().get(url).then((value) {
+      setState(() {
+        loadStatus = false;
+      });
+
+      if (value.toString() != 'null') {
+        var result = json.decode(value.data);
+        // print('Result ===>>> $result');
+
+        for (var map in result) {
+          FoodModel foodModel = FoodModel.fromJson(map);
+          setState(() {
+            foodmodels.add(foodModel);
+          });
+        }
+      } else {
+        setState(() {
+          status = false;
+        });
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
-      children: [Text('รายการอาหารร้าน'), addMenuButton()],
+      children: [
+        loadStatus ? MyStyle().showProgress() : showContent(),
+        addMenuButton(),
+      ],
     );
   }
+
+  Widget showContent() {
+    return status
+        ? shoeListFood()
+        : Center(
+            child: Text('ยังไม่มีรายการอาหาร'),
+          );
+  }
+
+  Widget shoeListFood() => ListView.builder(
+        itemCount: foodmodels.length,
+        itemBuilder: (context, index) => Row(
+          children: [
+            Container(
+              padding: EdgeInsets.all(10.0),
+              width: MediaQuery.of(context).size.width * 0.5,
+              height: MediaQuery.of(context).size.width * 0.4,
+              child: Image.network(
+                '${MyConstant().domain}${foodmodels[index].pathImage}',
+                fit: BoxFit.cover,
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.all(10.0),
+              width: MediaQuery.of(context).size.width * 0.5,
+              height: MediaQuery.of(context).size.width * 0.4,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  MyStyle().showTitleH2(foodmodels[index].nameFood),
+                  Text(
+                    'ราคา ${foodmodels[index].price} บาท',
+                    style: TextStyle(
+                      color: Colors.green.shade800,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    foodmodels[index].detail,
+                    style: TextStyle(),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
 
   Widget addMenuButton() => Column(
         mainAxisAlignment: MainAxisAlignment.end,
@@ -27,8 +128,10 @@ class _ListFoodMenuShopState extends State<ListFoodMenuShop> {
                 ),
                 child: FloatingActionButton(
                   onPressed: () {
-                    MaterialPageRoute materialPageRoute = MaterialPageRoute(builder: (context) => AddFoodMenu());
-                    Navigator.push(context, materialPageRoute);
+                    MaterialPageRoute materialPageRoute =
+                        MaterialPageRoute(builder: (context) => AddFoodMenu());
+                    Navigator.push(context, materialPageRoute)
+                        .then((value) => readFoodMenu());
                   },
                   child: Icon(Icons.add),
                 ),
