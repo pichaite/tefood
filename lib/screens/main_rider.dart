@@ -14,7 +14,7 @@ class _MainRiderState extends State<MainRider> {
     return Scaffold(
       drawer: showDrawer(),
       appBar: AppBar(
-        title: Text('Main Rider'),
+        title: Text('Main Rider '),
         actions: [
           IconButton(
             icon: Icon(Icons.exit_to_app),
