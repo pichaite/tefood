@@ -26,7 +26,6 @@ class _ListFoodMenuShopState extends State<ListFoodMenuShop> {
   }
 
   Future<Null> readFoodMenu() async {
-
     if (foodmodels.length != 0) {
       foodmodels.clear();
     }
@@ -108,12 +107,62 @@ class _ListFoodMenuShopState extends State<ListFoodMenuShop> {
                     foodmodels[index].detail,
                     style: TextStyle(),
                   ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: <Widget>[
+                      IconButton(
+                          icon: Icon(
+                            Icons.edit,
+                            color: Colors.green,
+                          ),
+                          onPressed: null),
+                      IconButton(
+                        icon: Icon(
+                          Icons.delete,
+                          color: Colors.red,
+                        ),
+                        onPressed: () => deleteFood(foodmodels[index]),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
           ],
         ),
       );
+
+  Future<Null> deleteFood(FoodModel foodModel) async {
+    showDialog(
+      context: context,
+      builder: (context) => SimpleDialog(
+        title: MyStyle().showTitleH2('คุณต้องการลบ เมนู ${foodModel.nameFood} ?'),
+        children: <Widget>[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: <Widget>[
+              FlatButton(
+                onPressed: ()async {
+                  Navigator.pop(context);
+                  String url = '${MyConstant().domain}/tefood/deleteFoodWhereId.php?isAdd=true&id=${foodModel.id}';
+                  await Dio().get(url).then((value) {
+                    readFoodMenu();
+                  });
+                },
+                child: Text('ยืนยัน'),
+              ),
+              FlatButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text('ยกเลิก'),
+              ),
+            ],
+          )
+        ],
+      ),
+    );
+  }
 
   Widget addMenuButton() => Column(
         mainAxisAlignment: MainAxisAlignment.end,

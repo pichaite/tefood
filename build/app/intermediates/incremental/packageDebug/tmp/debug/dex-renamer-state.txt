@@ -1,4 +1,4 @@
-#Sat Jun 13 12:04:33 ICT 2020
+#Wed Jun 17 08:31:28 ICT 2020
 base.0=C\:\\Users\\pichai\\Desktop\\Flutter\\project\\tefood\\build\\app\\intermediates\\dex\\debug\\mergeDexDebug\\out\\classes.dex
 path.0=classes.dex
 renamed.0=classes.dex
