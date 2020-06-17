@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tefood/model/food_model.dart';
 import 'package:tefood/screens/add_food_menu.dart';
+import 'package:tefood/screens/edit_food_menu.dart';
 import 'package:tefood/utility/my_constant.dart';
 import 'package:tefood/utility/my_style.dart';
 
@@ -92,40 +93,48 @@ class _ListFoodMenuShopState extends State<ListFoodMenuShop> {
               padding: EdgeInsets.all(10.0),
               width: MediaQuery.of(context).size.width * 0.5,
               height: MediaQuery.of(context).size.width * 0.4,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  MyStyle().showTitleH2(foodmodels[index].nameFood),
-                  Text(
-                    'ราคา ${foodmodels[index].price} บาท',
-                    style: TextStyle(
-                      color: Colors.green.shade800,
-                      fontWeight: FontWeight.bold,
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    MyStyle().showTitleH2(foodmodels[index].nameFood),
+                    Text(
+                      'ราคา ${foodmodels[index].price} บาท',
+                      style: TextStyle(
+                        color: Colors.green.shade800,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                  Text(
-                    foodmodels[index].detail,
-                    style: TextStyle(),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: <Widget>[
-                      IconButton(
+                    Text(
+                      foodmodels[index].detail,
+                      style: TextStyle(),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: <Widget>[
+                        IconButton(
                           icon: Icon(
                             Icons.edit,
                             color: Colors.green,
                           ),
-                          onPressed: null),
-                      IconButton(
-                        icon: Icon(
-                          Icons.delete,
-                          color: Colors.red,
+                          onPressed: () {
+                            MaterialPageRoute route = MaterialPageRoute(
+                                builder: (context) => EditFoodMenu(foodModel: foodmodels[index],));
+                            Navigator.push(context, route)
+                                .then((value) => readFoodMenu());
+                          },
                         ),
-                        onPressed: () => deleteFood(foodmodels[index]),
-                      ),
-                    ],
-                  ),
-                ],
+                        IconButton(
+                          icon: Icon(
+                            Icons.delete,
+                            color: Colors.red,
+                          ),
+                          onPressed: () => deleteFood(foodmodels[index]),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
@@ -136,15 +145,17 @@ class _ListFoodMenuShopState extends State<ListFoodMenuShop> {
     showDialog(
       context: context,
       builder: (context) => SimpleDialog(
-        title: MyStyle().showTitleH2('คุณต้องการลบ เมนู ${foodModel.nameFood} ?'),
+        title:
+            MyStyle().showTitleH2('คุณต้องการลบ เมนู ${foodModel.nameFood} ?'),
         children: <Widget>[
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
               FlatButton(
-                onPressed: ()async {
+                onPressed: () async {
                   Navigator.pop(context);
-                  String url = '${MyConstant().domain}/tefood/deleteFoodWhereId.php?isAdd=true&id=${foodModel.id}';
+                  String url =
+                      '${MyConstant().domain}/tefood/deleteFoodWhereId.php?isAdd=true&id=${foodModel.id}';
                   await Dio().get(url).then((value) {
                     readFoodMenu();
                   });
